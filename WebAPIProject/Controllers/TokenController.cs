@@ -1,8 +1,9 @@
-﻿using CodeFirstApproach.Service;
+﻿
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPIProject.DTO;
+using WebAPIProject.Interface;
 using WebAPIProject.Models;
 using WebAPIProject.Service;
 
@@ -13,11 +14,12 @@ namespace WebAPIProject.Controllers
     public class TokenController : ControllerBase
     {
         private readonly GameContext _gameContext;
-        private readonly TokenService _genreService;
+        private readonly IToken _genreService;
 
-        public TokenController(TokenService genreService)
+        public TokenController(IToken genreService,GameContext gameContext)
         {
             _genreService = genreService;
+            _gameContext= gameContext;
         }
         [HttpPost]
         public async Task<IActionResult> Post(LoginDTO userData)

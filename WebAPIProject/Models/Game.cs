@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WebAPIProject.Models
 {
@@ -24,8 +25,10 @@ namespace WebAPIProject.Models
         [ForeignKey("GameGenre")]
         public string GameGenreId { get; set; }
 
+        [JsonIgnore]
         public GameGenre GameGenre { get; set; }
 
+        [JsonIgnore]
         public ICollection<Achievements> Achievements { get; set; }
     }
 }

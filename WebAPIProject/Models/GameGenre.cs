@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace WebAPIProject.Models
 {
@@ -18,6 +20,7 @@ namespace WebAPIProject.Models
         [MaxLength(50)]
         public string Popularity { get; set; }
 
+        [JsonIgnore]
         public ICollection<Game> Games { get; set; }
     }
 }

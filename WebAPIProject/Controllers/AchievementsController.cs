@@ -9,9 +9,9 @@ using WebAPIProject.Service;
 [ApiController]
 public class AchievementsController : ControllerBase
 {
-    private readonly GameService<Achievements> _achievementService;
+    private readonly GameService<Achievements,string> _achievementService;
 
-    public AchievementsController(GameService<Achievements> achievementService)
+    public AchievementsController(GameService<Achievements, string> achievementService)
     {
         _achievementService = achievementService;
     }
@@ -20,7 +20,7 @@ public class AchievementsController : ControllerBase
     [Authorize(Roles ="Moderator,Player")]
     public async Task<ActionResult<IEnumerable<Achievements>>> GetAchievements()
     {
-        var achievements = await _achievementService.GetAllAsync();
+        var achievements = await _achievementService.GetAllAsync(a => a.Game);
         if (!achievements.Any())
             return NotFound("No achievements found.");
 
@@ -49,13 +49,14 @@ public class AchievementsController : ControllerBase
             var latestachievement = achievements.LastOrDefault();
             var newachievement = new Achievements
             {
-
-                AchievementId = "ACH" + (int.Parse(latestachievement.AchievementId.Substring(3)) + 1),
+                AchievementId = latestachievement != null
+                    ? "ACH" + (int.Parse(latestachievement.AchievementId.Substring(3)) + 1)
+                    : "ACH1",
                 AchievementName = achievement.name,
                 Badge = achievement.Badge,
-                Difficulty = achievement.Difficulty
-
-
+                Difficulty = achievement.Difficulty,
+                Reward = achievement.Reward, 
+                GameId = achievement.GameId
             };
             await _achievementService.AddAsync(newachievement);
             return CreatedAtAction(nameof(GetAchievement), new { id = newachievement.AchievementId }, newachievement);
@@ -68,8 +69,6 @@ public class AchievementsController : ControllerBase
         {
             return Conflict("Achievement already exists.");
         }
-
-       
     }
 
     [HttpPut("{id}")]

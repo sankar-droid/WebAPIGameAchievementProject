@@ -6,11 +6,11 @@ using WebAPIProject.Service;
 
 [Route("api/[controller]")]
 [ApiController]
-public class GameGenresController : ControllerBase
+public class GameGenreController : ControllerBase
 {
-    private readonly GameService<GameGenre> _genreService;
+    private readonly GameService<GameGenre, string> _genreService;
 
-    public GameGenresController(GameService<GameGenre> genreService)
+    public GameGenreController(GameService<GameGenre, string> genreService)
     {
         _genreService = genreService;
     }
@@ -19,7 +19,7 @@ public class GameGenresController : ControllerBase
     [Authorize(Roles = "Moderator,Player")]
     public async Task<ActionResult<IEnumerable<GameGenre>>> GetGenres()
     {
-        var genres = await _genreService.GetAllAsync();
+        var genres = await _genreService.GetAllAsync(g => g.Games);
         if (!genres.Any())
             return NotFound("No genres found.");
 

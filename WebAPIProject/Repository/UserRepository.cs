@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPIProject.Interface;
 using WebAPIProject.Models;
@@ -55,6 +56,21 @@ namespace WebAPIProject.Repository
             await _context.SaveChangesAsync();
             return entity;
         }
+        public async Task<IEnumerable<User>> GetAllAsync(params Expression<Func<User, object>>[] includes)
+        {
+            IQueryable<User> query = _context.Users;
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
     }
 
 }

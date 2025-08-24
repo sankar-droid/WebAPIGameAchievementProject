@@ -10,9 +10,9 @@ using WebAPIProject.Service;
 [ApiController]
 public class GamesController : ControllerBase
 {
-    private readonly GameService<Game> _gameService;
+    private readonly GameService<Game, string> _gameService;
 
-    public GamesController(GameService<Game> gameService)
+    public GamesController(GameService<Game, string> gameService)
     {
         _gameService = gameService;
     }
@@ -22,7 +22,7 @@ public class GamesController : ControllerBase
     [Authorize(Roles = "Moderator,Player")]
     public async Task<ActionResult<IEnumerable<Game>>> GetGames()
     {
-        var games = await _gameService.GetAllAsync();
+        var games = await _gameService.GetAllAsync(g => g.GameGenre, g => g.Achievements);
 
         if (!games.Any())
             return NotFound("No games available.");
@@ -79,7 +79,9 @@ public class GamesController : ControllerBase
                 GameId = "GAME" + (int.Parse(latestgame.GameId.Substring(4)) + 1),
                 GameName = game.GameName,
                 Description = game.Description,
+                Developer=game.Developer,
                 ReleaseYear = game.ReleaseYear,
+                GameGenreId = game.GameGenreId
 
 
             }; 

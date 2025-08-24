@@ -9,6 +9,8 @@
 
         public string Reward { get; set; }
 
+        public string GameId { get; set; }
 
+        
     }
 }

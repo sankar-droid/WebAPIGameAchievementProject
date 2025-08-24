@@ -1,4 +1,4 @@
-using CodeFirstApproach.Service;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -52,14 +52,15 @@ builder.Services.AddScoped<IGameAPI<GameGenre, string>, GameAPIRepository<GameGe
 builder.Services.AddScoped<IGameAPI<Achievements, string>, GameAPIRepository<Achievements, string>>();
 builder.Services.AddScoped<IGameAPI<User, int>, UserRepository>();
 builder.Services.AddScoped<IUser, UserRepository>();
+builder.Services.AddScoped<UserRepository>();
 // Remove duplicate: builder.Services.AddScoped<IGameAPI<User, int>, UserRepository>();
 
 // Register services with interfaces (fix circular dependency)
-builder.Services.AddScoped<GameService<Game>>();
-builder.Services.AddScoped<GameService<Achievements>>();
-builder.Services.AddScoped<GameService<GameGenre>>();
+builder.Services.AddScoped<GameService<Game,string>>();
+builder.Services.AddScoped<GameService<Achievements, string>>();
+builder.Services.AddScoped<GameService<GameGenre, string>>();
 builder.Services.AddScoped< UserService>(); // Register interface, not concrete
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<IToken,TokenService>();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>

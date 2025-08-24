@@ -13,5 +13,8 @@ namespace WebAPIProject.DTO
         public string Developer { get; set; }
 
         public string ReleaseYear { get; set; }
+
+        public string GameGenreId { get; set; }
+
     }
 }
