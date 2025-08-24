@@ -115,4 +115,56 @@ public class GamesController : ControllerBase
 
         return NoContent();
     }
+    [HttpGet("released/{year}")]
+    public async Task<ActionResult<IEnumerable<Game>>> GetGamesByYear(string year)
+    {
+        var games = await _gameService.GetAllAsync();
+        var result = games.Where(g => g.ReleaseYear == year);
+        return Ok(result);
+    }
+
+    [HttpPost("batch")]
+    [Authorize(Roles = "Moderator")] 
+    public async Task<ActionResult<IEnumerable<Game>>> BatchInsert([FromBody] List<GameDTO> gamesDto)
+    {
+        if (gamesDto == null || !gamesDto.Any())
+            return BadRequest("No games provided for batch insert.");
+
+        var existingGames = await _gameService.GetAllAsync();
+        var lastGame = existingGames.LastOrDefault();
+        int lastId = lastGame != null ? int.Parse(lastGame.GameId.Substring(4)) : 0;
+
+        var newGames = new List<Game>();
+
+        foreach (var dto in gamesDto)
+        {
+            lastId++;
+            var newGame = new Game
+            {
+                GameId = $"GAME{lastId:D2}",
+                GameName = dto.GameName,
+                Description = dto.Description,
+                Developer = dto.Developer,
+                ReleaseYear = dto.ReleaseYear,
+                GameGenreId = dto.GameGenreId
+            };
+
+            newGames.Add(newGame);
+        }
+
+        foreach (var game in newGames)
+            await _gameService.AddAsync(game);
+
+        return Ok(newGames); 
+    }
+
+
+    [HttpOptions("{id}")]
+    public IActionResult Options()
+    {
+        Response.Headers.Add("Allow", "GET, PUT, DELETE, PATCH");
+        return Ok();
+    }
+
+
 }

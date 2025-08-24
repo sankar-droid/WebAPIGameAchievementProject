@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebAPIProject.Models;
 
 namespace WebAPIProject.DTO
 {
@@ -16,5 +17,6 @@ namespace WebAPIProject.DTO
 
         public string GameGenreId { get; set; }
 
+        public List<Link> Links { get; set; } = new();
     }
 }

@@ -103,4 +103,20 @@ public class GameGenreController : ControllerBase
 
         return NoContent();
     }
+    [HttpHead("{id}")]
+    public async Task<IActionResult> HeadGame(string id)
+    {
+        var genre = await _genreService.GetByIdAsync(id);
+
+        if (genre == null)
+            return NotFound();
+
+      
+        Response.Headers.Add("Resource-Id", genre.GameGenreId);
+        Response.Headers.Add("Resource-Name", genre.GenreName);
+        Response.Headers.Add("Last-Modified", DateTime.UtcNow.ToString("R")); 
+
+        return Ok();
+    }
+
 }

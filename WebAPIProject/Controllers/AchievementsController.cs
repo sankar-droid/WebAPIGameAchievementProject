@@ -105,4 +105,11 @@ public class AchievementsController : ControllerBase
 
         return NoContent();
     }
+    [HttpGet("difficulty/{level}")]
+    public async Task<ActionResult<IEnumerable<Achievements>>> GetByDifficulty(string level)
+    {
+        var achievements = await _achievementService.GetAllAsync();
+        var result = achievements.Where(a => a.Difficulty.Equals(level, StringComparison.OrdinalIgnoreCase));
+        return Ok(result);
+    }
 }
