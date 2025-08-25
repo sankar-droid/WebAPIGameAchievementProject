@@ -17,6 +17,5 @@ namespace WebAPIProject.DTO
 
         public string GameGenreId { get; set; }
 
-        public List<Link> Links { get; set; } = new();
     }
 }
