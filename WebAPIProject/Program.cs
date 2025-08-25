@@ -1,19 +1,21 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using WebAPIProject.Extensions;
 using WebAPIProject.Interface;
 using WebAPIProject.Models;
 using WebAPIProject.Repository;
 using WebAPIProject.Service;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
+builder.Services.ConfigureCors();
+builder.Services.ConfigureIISIntegration();
 // Remove AddOpenApi() and use only Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
@@ -85,6 +87,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -92,8 +95,14 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty; // Makes Swagger UI available at root
     });
 }
+else
+{
+    
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
+app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All }); app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
